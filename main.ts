@@ -1,6 +1,7 @@
 namespace SpriteKind {
     export const obstacle = SpriteKind.create()
 }
+// this is calculating the ball velocity when it bounces of the paddle. it changes the gravity and it gives one pint
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, otherSprite) {
     if (sprite.x < otherSprite.x) {
         ball.vx = 0 - bounce / 4
@@ -8,15 +9,19 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Projectile, function (sprite, ot
         ball.vx = bounce / 4
     }
     ball.vy = bounce
+    info.changeScoreBy(1)
     gravity += 1
     bounce = 0 - gravity
 })
+// Created on: Janurary 13 2023
+// Created by: Adam De Rango
+// 
+// the pint of the gam,e is to not let the ball tocuh the line. if it toches the line you lose. everytime you hit the ball with the paddle and prevent it from reaching the line you get a point. if you lose the game by letting the ball touch it will tell you your high score.
+// 
+// it is entering the basic values for this gameand basic guidelines
 let ball: Sprite = null
 let bounce = 0
 let gravity = 0
-info.setLife(3)
-gravity = 200
-bounce = 0 - gravity
 scene.setBackgroundImage(img`
     fffffffffffff44444444444444444fffffffffff44444444444444444fffffffffffffffffffffffffffffffffffff44444fffffffffff44444444444ffffffff444444444444444444444444444444
     ffffffffffffff44444444444444444ffffffffff4444444fffff44444fffffffffffffffffffffffffffffffffffff4444fffffffffffff4444444444ffffffff444444444444444444444444444444
@@ -127,11 +132,11 @@ scene.setBackgroundImage(img`
     44444444444ffffffffff444444444444444444444444444444444fffffffff444444444444444ffffffffff4444444444444444444fffffffff4444444444ffffffffffffffffffffffffffffffffff
     444444444444fffffffff444444444444444444444444444444444ffffffff44444444444444444ffffffff44444444fffffffff4444fffffff44444444444ffffffffffffffffffffffffffffffffff
     4444444444444fffffff44444444444444444444444444444444444ffffff4444444444444444444ffffff44444444fffffffffff4444ffffff4444444444fffffffffffffffffffffffffffffffffff
-    5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
-    5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
-    5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
-    5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
-    5555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555555
+    2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+    2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+    2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+    2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
+    2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222
     4fffffffff444444ff4444fffffffffffffffffff4444444444444444fff4444444fffffff4444444ff44444444fffffffffffffffff4444fff4444444444fffffffffffffffffffffffffffffffffff
     4fffffffff444444ff4444fffffffffffffffffff4444444444444444fff4444444fffffff4444444ff44444444fffffffffffffffff4444fff4444444444fffffffffffffffffffffffffffffffffff
     4fffffffff444444ff4444fffffffffffffffffff4444444444444444fff4444444fffffff4444444ff44444444fffffffffffffffff4444fff4444444444fffffffffffffffffffffffffffffffffff
@@ -139,7 +144,9 @@ scene.setBackgroundImage(img`
     44fffffff4444444ff4444fffffffffffffffffff4444444444444444fff444444444444444444444ff44444444fffffffffffffffff4444fff4444444444fffffffffffffffffffffffffffffffffff
     4444444444444444ff4444fffffffffffffffffff4444444444444444ffff4444444444444444444fff44444444fffffffffffffffff4444fff4444444444fffffffffffffffffffffffffffffffffff
     `)
-let mySprite = sprites.create(img`
+gravity = 200
+bounce = 0 - gravity
+let stick_thingy = sprites.create(img`
     ................................
     ................................
     ................................
@@ -173,6 +180,8 @@ let mySprite = sprites.create(img`
     ................................
     ................................
     `, SpriteKind.Player)
+stick_thingy.setPosition(80, 95)
+controller.moveSprite(stick_thingy, 100, 100)
 ball = sprites.create(img`
     .........................
     .........................
@@ -199,15 +208,14 @@ ball = sprites.create(img`
     .........................
     .........................
     .........................
-    `, SpriteKind.obstacle)
-controller.moveSprite(mySprite, 100, 100)
-mySprite.bottom = 110
-game.splash("DONT LET THE BALL HIT THE YELLOW LINE")
-game.splash("HOW GOOD ARE YOU AT THIS GAME?")
-ball.ay += 0
+    `, SpriteKind.Projectile)
+ball.ay = gravity
 ball.setBounceOnWall(true)
-forever(function () {
+game.splash("DONT LET THE BALL HIT THE red line LINE")
+game.splash("HOW GOOD ARE YOU AT THIS GAME?")
+// if the ball touches this y axis you lose the game
+game.onUpdate(function () {
     if (ball.y >= 110) {
-        info.changeLifeBy(-1)
+    	
     }
 })
